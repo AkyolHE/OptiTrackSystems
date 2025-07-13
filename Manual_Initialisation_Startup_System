@@ -1,0 +1,22 @@
+% 1. Connect Transmitter to the Internet.
+
+% 2. Connect Receiver to the Internet.
+
+% 3. Open the mlx. file of OptiTrack on the receiver.
+
+% 4. Open MATLAB Mobile on Transmitter.
+
+% 5. Manually go to the sensor setting and select the Stream option,
+% instead of logging. 
+
+% 6. On the Receiver, type in the command centre the following code / Or run this code;
+
+m = mobiledev; % Initialising the m device (Transmitter)
+
+m.AccelerationSensorEnabled = 1; % Activating the Acceleration Sensor on the Transmitter.
+
+m.logging = 1; % Enable logging of the Data, it will be logged and streamed to the MATLAB Cloud. 
+
+m.accellog; % Will enable the logging of accellerations (X-Y-Z)
+
+m.PositionSensorEnabled = 1; % This will enable the PositionSensor on the m device. 
