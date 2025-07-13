@@ -1,0 +1,87 @@
+% Assuming you have already initialized the 'm' object
+m.AccelerationSensorEnabled;
+m.Logging = 1;
+m.accellog;
+m.PositionSensorEnabled = 1;
+
+
+% Set the desired duration (in hours)
+desired_duration_hours = 2;
+
+% Create a timer to stop execution after the specified duration
+t = timer('StartDelay', desired_duration_hours * 3600, 'TimerFcn', 'disp("Code execution stopped after 2 hours.")');
+
+% Start the timer
+start(t);
+
+
+data_X = zeros(200,1);
+data_Y = zeros(200,1);
+data3 = zeros(200,1);
+data_lat = zeros(200,1);
+data_lon = zeros(200,1);
+data_lat1 = zeros(200,1);
+data_lon1 = zeros(200,1);
+
+figure; %Try to make this one plot. Subplot the X-Y Coordinates.
+h1 = scatter(data_X,data_Y);
+xlabel('X-Coordinate'); 
+ylabel('Y-Coordinate');
+xlim([-10 10])
+ylim([-10 10])
+grid on;
+
+
+figure;
+h3 = plot(data3);
+title('Velocity'); % Velocity is given in km/h. 
+ylabel('Velocity [km/h]');
+xlabel('Sample [10 Hz]');
+grid on;
+
+figure;
+h4 = plot(data_lat,data_lon);
+title('Position Log');
+ylabel('latitude');
+xlabel('longitude');
+grid on;
+
+figure;
+h5 = plot(data_lat1,data_lon1);
+title('Tracking LIVE');
+ylabel('latitude');
+xlabel('longitude');
+grid on;
+
+
+% Run the code indefinitely until the timer stops it
+while true
+    data_acc = m.accellog; %maybe get the last datasets 
+    x_acc = data_acc(:, 1);
+    y_acc = data_acc(:, 2);
+    [lat, lon, t, speed, course, alt, horizacc] = poslog(m);
+    [o, t] = orientlog(m);
+
+    speed = speed*3.6; % This will convert the m/s to km/h. 
+
+    % redraw plot [continuous update of the plot]
+    h1.XData = x_acc(end-10:end); % For only Returning the last 10 Values.
+    h1.YData = y_acc(end-10:end); % For only Returning the last 10 Values. 
+    drawnow
+
+    h3.YData = speed;
+    drawnow
+
+    h4.YData = lat;
+    h4.XData = lon;
+    drawnow
+
+    h5.YData = lat(end-10:end);
+    h5.XData = lon(end-10:end);
+    drawnow
+
+end
+
+% Clean up: Stop and delete the timer
+stop(t);
+delete(t);
